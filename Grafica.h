@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <utility>
+#include <vector>
 
 
 /**
@@ -52,6 +53,9 @@ public:
      * @return El numero de nodos de la grafica
      */
     unsigned ObtenerNumNodos() const;
+
+    std::string ObtenerMenorArista(const std::string &etiqueta) const;
+
 
     /**
      * @brief Obtiene el grado de un nodo de la grafica
@@ -120,12 +124,6 @@ public:
      */
     bool EstaVacia() const;
 
-    /**
-     * @brief Regresa la etiqueta del nodo adyacente con menor peso en su arista
-     * @param etiqueta Etiqueta del nodo que se quiere buscar la menor arista
-     * @return Etiqueta del nodo adyacente con menor peso en su arista
-     */
-    std::string ObtenerMenorArista(const std::string &etiqueta) const;
 
     std::string ObtenerPrimerNodo() const;
 
@@ -189,6 +187,8 @@ public:
  * @return Puntero al nodo buscado, nullptr si no se encuentra
  */
     Nodo *ObtenerNodo(const std::string &etiqueta) const;
+
+    std::vector<Grafica::Nodo *> ObtenerNodos() const;
 
 private:
     unsigned numNodos; /**<Numero de nodos en la grafica */

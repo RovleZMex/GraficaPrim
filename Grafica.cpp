@@ -224,8 +224,8 @@ std::string Grafica::Nodo::ObtenerMenorArista() {
     Nodo::Arista *aux = pArista;
     int menorPeso = aux->peso;
     std::string etiquetaMenor = aux->adyacente->etiqueta;
-    while(aux != nullptr){
-        if(aux->peso < menorPeso){
+    while (aux != nullptr) {
+        if (aux->peso < menorPeso) {
             menorPeso = aux->peso;
             etiquetaMenor = aux->adyacente->etiqueta;
         }
@@ -338,13 +338,29 @@ bool Grafica::BuscarNodo(const std::string &etiqueta) const {
     return ObtenerNodo(etiqueta) != nullptr;
 }
 
-std::string Grafica::ObtenerMenorArista(const std::string& etiqueta) const{
-    Nodo *temp = ObtenerNodo(etiqueta);
-    return temp->ObtenerMenorArista();
+std::string Grafica::ObtenerMenorArista(const std::string &etiqueta) const {
+    Grafica::Nodo *nodo = ObtenerNodo(etiqueta);
+    if (nodo == nullptr) {
+        throw NodoNoEncontrado();
+    }
+
+    int menorPeso = INT_MAX;
+    std::string menorArista;
+
+    Nodo::Arista *arista = nodo->pArista;
+    while (arista != nullptr) {
+        if (arista->ObtenerPeso() < menorPeso) {
+            menorPeso = arista->ObtenerPeso();
+            menorArista = arista->adyacente->etiqueta;
+        }
+        arista = arista->sigArista;
+    }
+
+    return menorArista;
 }
 
-std::string Grafica::ObtenerPrimerNodo() const{
-    if(pNodo == nullptr) return "";
+std::string Grafica::ObtenerPrimerNodo() const {
+    if (pNodo == nullptr) return "";
     return pNodo->etiqueta;
 }
 
@@ -356,4 +372,15 @@ int Grafica::Nodo::Arista::ObtenerPeso() const {
 
 //****************************************************************
 
+std::vector<Grafica::Nodo *> Grafica::ObtenerNodos() const {
+    std::vector<Grafica::Nodo *> resultado;
 
+    Grafica::Nodo *aux = pNodo;
+
+    while (aux != nullptr) {
+        resultado.push_back(aux);
+        aux = aux->siguiente;
+    }
+
+    return resultado;
+}

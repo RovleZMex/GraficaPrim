@@ -3,4 +3,4 @@ project(Prim)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Prim main.cpp GraficaPrim.cpp GraficaPrim.h Grafica.cpp Grafica.h)
+add_executable(Prim main.cpp Grafica.cpp Grafica.h AlgoritmoPrim.cpp AlgoritmoPrim.h)
