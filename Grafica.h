@@ -7,15 +7,14 @@
 
 #include <iostream>
 #include <utility>
-#include <vector>
-
 
 /**
  * @brief Clase que representa una gráfica no dirigida.
  * Esta clase implementa una gráfica no dirigida utilizando una lista de adyacencia.
  * Los nodos están representados por la estructura Nodo y las aristas por la estructura Arista dentro de cada Nodo.
  */
-struct Grafica {
+class Grafica {
+    friend class AlgoritmoPrim;
 public:
     /**
      * @brief Constructor de la clase grafica
@@ -41,6 +40,7 @@ public:
      */
     void EliminarNodo(const std::string &etiqueta);
 
+
     /**
      * @brief Agrega una arista a la grafica entre dos nodos existentes
      * @param inicio La etiqueta del nodo inicial de la arista
@@ -53,8 +53,6 @@ public:
      * @return El numero de nodos de la grafica
      */
     unsigned ObtenerNumNodos() const;
-
-    std::string ObtenerMenorArista(const std::string &etiqueta) const;
 
 
     /**
@@ -124,9 +122,6 @@ public:
      */
     bool EstaVacia() const;
 
-
-    std::string ObtenerPrimerNodo() const;
-
     struct Nodo {
         unsigned grado; /**<Grado del nodo */
         std::string etiqueta; /**<Etiqueta del nodo */
@@ -178,8 +173,6 @@ public:
          */
         void EliminarArista(Nodo *ady);
 
-        std::string ObtenerMenorArista();
-
     } *pNodo, *uNodo; /**<Puntero al primer y ultimo nodo de la grafica */
     /**
  * @brief Regresa un puntero al nodo buscado
@@ -188,7 +181,6 @@ public:
  */
     Nodo *ObtenerNodo(const std::string &etiqueta) const;
 
-    std::vector<Grafica::Nodo *> ObtenerNodos() const;
 
 private:
     unsigned numNodos; /**<Numero de nodos en la grafica */
@@ -208,14 +200,18 @@ private:
      * @return true si la arista existe, false de lo contrario
      */
     bool BuscarArista(Nodo *a, Nodo *b) const;
-
-    void CalcularPesoAristas();
 };
 
 class NodoNoEncontrado : public std::exception {
 public:
     const char *what() const noexcept override {
         return "Nodo no encontrado";
+    }
+};
+class AristaNoEncontrada : public std::exception {
+public:
+    const char* what() const noexcept override {
+        return "Arista no encontrada";
     }
 };
 
