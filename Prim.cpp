@@ -4,58 +4,95 @@
 
 #include "Prim.h"
 
-Grafica Prim::Ejecutar(const Grafica &graficaOriginal) const {
+Grafica Prim::Ejecutar(const Grafica &graficaOriginal) {
     Grafica resultado;
 
-    if (graficaOriginal.EstaVacia())return resultado;
+    if (graficaOriginal.EstaVacia()) return resultado;
 
-    std::vector<Grafica::Nodo *> nodosVisitados; //Contiene punteros a los nodos visitados
-
-    std::vector<Grafica::Nodo *> nodosOriginales;
-
+    std::vector<Grafica::Nodo *> nodosVisitados;
     std::vector<std::pair<std::string, std::string>> aristasElegidas;
+    std::vector<int> pesosAristas;
 
-    Grafica::Nodo *temp = graficaOriginal.pNodo;
-    while (temp != nullptr) {
-        resultado.AgregarNodo(temp->etiqueta);
-        nodosOriginales.push_back(temp);
-        temp = temp->siguiente;
+    // Agregar el primer nodo a la gráfica resultado y a nodosVisitados
+    Grafica::Nodo *primerNodo = graficaOriginal.pNodo;
+    resultado.AgregarNodo(primerNodo->etiqueta);
+    nodosVisitados.push_back(primerNodo);
+
+    // Verificar si la graficaOriginal es conexa
+    if (!EsConexa(graficaOriginal)) {
+        throw std::runtime_error("Grafica no conexa");
     }
 
-    nodosVisitados.push_back(resultado.pNodo);
+    while (nodosVisitados.size() < graficaOriginal.ObtenerNumNodos()) {
+        int menorPeso = INT_MAX;
+        Grafica::Nodo *nodoOrigen = nullptr;
+        Grafica::Nodo *nodoDestino = nullptr;
 
-    while (nodosVisitados.size() != resultado.ObtenerNumNodos()) {
-        //Buscar en los nodos visitados la arista de menor peso que no esté en los nodos visitados
-        for (Grafica::Nodo *nodo: nodosOriginales) {
+        // Buscar la arista de menor peso que conecte con un nodo no visitado
+        for (Grafica::Nodo *nodo: nodosVisitados) {
             Grafica::Nodo::Arista *tempArista = nodo->pArista;
-            std::cout << tempArista->adyacente->etiqueta;
-            int menorPeso = INT_MAX;
-            Grafica::Nodo::Arista *mejorArista = nullptr;
+
             while (tempArista != nullptr) {
                 if (std::find(nodosVisitados.begin(), nodosVisitados.end(), tempArista->adyacente) ==
                     nodosVisitados.end()) {
-                    //El nodo adyacente no está visitado, checar si el peso es menor
+                    // El nodo adyacente no está visitado, checar si el peso es menor
                     if (tempArista->peso < menorPeso) {
                         menorPeso = tempArista->peso;
-                        mejorArista = tempArista;
+                        nodoOrigen = nodo;
+                        nodoDestino = tempArista->adyacente;
                     }
-                } else {
-                    //siguiente arista por el adyacente ya se visitó
-                    tempArista = tempArista->sigArista;
                 }
-                //if(mejorArista != nullptr) std::cout << tempArista->adyacente->etiqueta << std::endl;
-                //else std::cout << "Arista nula" << std::endl;
-                if(mejorArista != nullptr){
-                    std::cout << "Agregado";
-                    nodosVisitados.push_back(mejorArista->adyacente);
-                    aristasElegidas.emplace_back(nodo->etiqueta, mejorArista->adyacente->etiqueta);
-                }
+                tempArista = tempArista->sigArista;
             }
-            //si el arista es nulo, terminar
+        }
+
+        if (nodoOrigen != nullptr && nodoDestino != nullptr) {
+            // Agregar el nodo destino a la gráfica resultado y a nodosVisitados
+            resultado.AgregarNodo(nodoDestino->etiqueta);
+            nodosVisitados.push_back(nodoDestino);
+
+            // Agregar la arista elegida a las estructuras correspondientes
+            aristasElegidas.emplace_back(nodoOrigen->etiqueta, nodoDestino->etiqueta);
+            pesosAristas.push_back(menorPeso);
         }
     }
 
-    std::cout << aristasElegidas.size() << std::endl;
+    // Agregar las aristas elegidas a la gráfica resultado
+    for (int i = 0; i < aristasElegidas.size(); ++i) {
+        resultado.AgregarArista(aristasElegidas[i].first, aristasElegidas[i].second, pesosAristas[i]);
+    }
 
     return resultado;
 }
+
+bool Prim::EsConexa(const Grafica &grafica) {
+    if (grafica.EstaVacia()) return true;
+
+    std::vector<Grafica::Nodo *> nodosVisitados;
+    std::queue<Grafica::Nodo *> nodosPorVisitar;
+
+    Grafica::Nodo *primerNodo = grafica.pNodo;
+    nodosVisitados.push_back(primerNodo);
+    nodosPorVisitar.push(primerNodo);
+
+
+    while (!nodosPorVisitar.empty()) {
+        Grafica::Nodo *nodoActual = nodosPorVisitar.front();
+        nodosPorVisitar.pop();
+
+        Grafica::Nodo::Arista *aristaActual = nodoActual->pArista;
+        while (aristaActual != nullptr) {
+            if (std::find(nodosVisitados.begin(), nodosVisitados.end(), aristaActual->adyacente) ==
+                nodosVisitados.end()) {
+                nodosVisitados.push_back(aristaActual->adyacente);
+                nodosPorVisitar.push(aristaActual->adyacente);
+            }
+            aristaActual = aristaActual->sigArista;
+        }
+    }
+
+    return nodosVisitados.size() == grafica.ObtenerNumNodos();
+}
+
+
+

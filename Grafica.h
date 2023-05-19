@@ -15,6 +15,7 @@
  */
 class Grafica {
     friend class AlgoritmoPrim;
+
 public:
     /**
      * @brief Constructor de la clase grafica
@@ -53,6 +54,12 @@ public:
      * @return El numero de nodos de la grafica
      */
     unsigned ObtenerNumNodos() const;
+
+    /**
+     * @brief Regresa el peso de las aristas en la gráfica
+     * @return El peso de las aristas en la gráfica
+     */
+    int ObtenerPesoAristas() const;
 
 
     /**
@@ -139,7 +146,6 @@ public:
              */
             explicit Arista(Nodo *ady, Arista *sigA = nullptr, int p = 0) : adyacente(ady), sigArista(sigA), peso(p) {};
 
-            int ObtenerPeso() const;
         } *pArista /**<Puntero a la primera arista del nodo */;
 
         /**
@@ -185,7 +191,7 @@ public:
 private:
     unsigned numNodos; /**<Numero de nodos en la grafica */
     unsigned numAristas; /**<Numero de aristas en la grafica */
-    int pesoAristas;
+    int pesoAristas; /**<Peso de las aristas en la grafica*/
 
 
     /**
@@ -208,11 +214,6 @@ public:
         return "Nodo no encontrado";
     }
 };
-class AristaNoEncontrada : public std::exception {
-public:
-    const char* what() const noexcept override {
-        return "Arista no encontrada";
-    }
-};
+
 
 #endif //GRAFICA_GRAFICA_H

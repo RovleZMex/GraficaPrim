@@ -324,11 +324,8 @@ bool Grafica::BuscarNodo(const std::string &etiqueta) const {
     return ObtenerNodo(etiqueta) != nullptr;
 }
 
-
-//****************************************************************
-
-int Grafica::Nodo::Arista::ObtenerPeso() const {
-    return peso;
+int Grafica::ObtenerPesoAristas() const {
+    return pesoAristas;
 }
 
 //****************************************************************
